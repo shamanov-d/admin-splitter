@@ -1,6 +1,6 @@
 {
   "name": "admin-splitter",
-  "version": "2022.1.1",
+  "version": "2022.4.1",
   "description": "добавление администратора сообщества в кучу страниц(вк)",
   "author": "shamanov-d",
   "license": "UNLICENSED",
@@ -26,8 +26,8 @@
     "@vk-io/authorization": "^1.3.0",
     "commander": "^9.1.0",
     "readline-sync": "^1.4.10",
-    "vk-io": "4.7.0",
-    "rucaptcha-api": "0.0.3"
+    "rucaptcha-api": "0.0.3",
+    "vk-io": "4.7.0"
   },
   "devDependencies": {
     "@smmwasted/release-tool": "2022.1.3",
