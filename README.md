@@ -1,4 +1,4 @@
-# vk-chat-parser
+# admin-splitter
 
 ## Чего это:
 
