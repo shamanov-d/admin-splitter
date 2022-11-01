@@ -11,7 +11,7 @@
     "url": "https://github.com/shamanov-d/admin-splitter.git"
   },
   "scripts": {
-    "build": "tsc && ncc build ./dist/index.js -o transpile && pkg ./transpile/index.js --out-path ./bin && rm -R dist && rm -R  transpile",
+    "build": "tsc && ncc build ./dist/index.js -o transpile && pkg ./transpile/index.js --out-path ./bin",
     "dev": "ts-node ./src/index.ts",
     "prettier:base": "prettier **/*.{ts,js,yml,yaml,json,md}",
     "lint:base": "yarn eslint --max-warnings 0 --format stylish \"src/**/*.ts\"",
@@ -30,7 +30,7 @@
     "vk-io": "4.7.0"
   },
   "devDependencies": {
-    "@smmwasted/release-tool": "2022.1.3",
+    "ncc": "^0.3.6",
     "@types/readline-sync": "^1.4.4",
     "@typescript-eslint/eslint-plugin": "5.16.0",
     "@typescript-eslint/parser": "5.16.0",
@@ -48,6 +48,9 @@
     "ts-jest": "26.5.1",
     "ts-loader": "^9.2.8",
     "typescript": "^4.6.3"
+  },
+  "pkg": {
+    "scripts": "require.js"
   },
   "lint-staged": {
     "**/*.ts": [
