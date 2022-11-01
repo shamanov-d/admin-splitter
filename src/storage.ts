@@ -1,5 +1,5 @@
-import { existsSync, writeFileSync, readFileSync } from "fs";
-import { resolve } from "path";
+import {existsSync, writeFileSync, readFileSync} from "fs";
+import {resolve} from "path";
 
 const STORAGE_NAME = resolve(process.cwd() + "/storage.json");
 
@@ -7,13 +7,13 @@ export interface StorageType {
   sourceUser: {
     token: string;
     user: number;
-    excludePage?: number[]
-  }
+    excludePage?: number[];
+  };
   targetUser: {
     user: number;
     token: string;
-  }
-  captchaToken?: string
+  };
+  captchaToken?: string;
 }
 
 export namespace Storage {
