@@ -7,6 +7,7 @@ export interface StorageType {
   sourceUser: {
     token: string;
     user: number;
+    searchWords?: string[];
     excludePage?: number[];
   };
   targetUser: {

@@ -8,6 +8,13 @@ import {Command} from "commander";
 import {Storage} from "./storage";
 import CaptchaResolver from "rucaptcha-api";
 
+export const filterReg = (name: string, searchTxt?: string) => {
+  const formatSearch = searchTxt?.trim();
+
+  if (!formatSearch) return true;
+  return formatSearch && new RegExp(formatSearch, "gi").test(name);
+};
+
 // colors
 // const Reset = "\x1b[0m",
 //   FgGreen = "\x1b[32m";
@@ -119,6 +126,12 @@ cliApp
     })) as unknown as {
       items: PageT[];
     };
+    if (storage.sourceUser.searchWords)
+      list.items = list.items.filter(page => {
+        for (const word of storage.sourceUser.searchWords!)
+          if (filterReg(page.name!, word)) return true;
+        return false;
+      });
 
     console.log(
       `Администрируемых сообществ в источниках: ${list.items.length}`,
