@@ -23,6 +23,7 @@ interface Options {
   sourceUser?: string;
   targetUser?: string;
   exclude?: string;
+  include?: string;
 }
 
 const apiVersion = "5.154";
@@ -79,8 +80,9 @@ cliApp
   .description("adding an admin to many pages")
   .option("-su, --sourceUser [string]", "password vk page")
   .option("-tu, --targetUser [string]", "login vk page")
-  .option("-ex, --exclude [string]", "login vk page")
-  .action(async (_, {sourceUser, targetUser, exclude}: Options) => {
+  .option("-ex, --exclude [string]", "<pageId>,<pageId>,<pageId>,...")
+  .option("-in, --include [string]", "<pageId>,<pageId>,<pageId>,...")
+  .action(async (_, {sourceUser, targetUser, exclude, include}: Options) => {
     const storage = Storage.get();
     storage.sourceUser = await loginUser(
       storage.sourceUser,
@@ -94,8 +96,10 @@ cliApp
       "targetUser",
     );
     const excludeList = exclude?.split(",")?.map(Number)?.filter(Boolean);
+    const includeList = include?.split(",")?.map(Number)?.filter(Boolean);
     Storage.save(storage);
     if (excludeList?.length) storage.sourceUser.excludePage = excludeList;
+    if (excludeList?.length) storage.sourceUser.includePage = includeList;
     if (!storage.captchaToken) {
       storage.captchaToken = readlineSync.question("captcha token:").trim();
       Storage.save(storage);
@@ -126,12 +130,35 @@ cliApp
     })) as unknown as {
       items: PageT[];
     };
-    if (storage.sourceUser.searchWords)
-      list.items = list.items.filter(page => {
+    if (storage.sourceUser.excludePage?.length) {
+      const newList = list.items.filter(page => {
+        return !storage.sourceUser.excludePage?.includes(page.id!);
+      });
+      console.log(
+        `Активно excludePage. До фильтрации: ${list.items.length}. После: ${newList.length}`,
+      );
+      list.items = newList;
+    }
+    if (storage.sourceUser.includePage?.length) {
+      const newList = list.items.filter(page => {
+        return storage.sourceUser.includePage?.includes(page.id!);
+      });
+      console.log(
+        `Активно includePage. До фильтрации: ${list.items.length}. После: ${newList.length}`,
+      );
+      list.items = newList;
+    }
+    if (storage.sourceUser.searchWords) {
+      const newList = list.items.filter(page => {
         for (const word of storage.sourceUser.searchWords!)
           if (filterReg(page.name!, word)) return true;
         return false;
       });
+      console.log(
+        `Активна фильтрация. До фильтрации: ${list.items.length}. После: ${newList}`,
+      );
+      list.items = newList;
+    }
 
     console.log(
       `Администрируемых сообществ в источниках: ${list.items.length}`,

@@ -9,6 +9,7 @@ export interface StorageType {
     user: number;
     searchWords?: string[];
     excludePage?: number[];
+    includePage?: number[];
   };
   targetUser: {
     user: number;
