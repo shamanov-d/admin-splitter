@@ -108,15 +108,11 @@ cliApp
     const vkSource = new VK({
       token: storage.sourceUser.token,
       apiVersion,
-      apiMode: "parallel_selected",
-      apiExecuteMethods: ["groups.join", "groups.editManager"],
       apiLimit: 2,
     });
     const vkTarget = new VK({
       token: storage.targetUser.token,
       apiVersion,
-      apiMode: "parallel_selected",
-      apiExecuteMethods: ["groups.join", "groups.editManager"],
       apiLimit: 2,
     });
     const captchaResolver = new CaptchaResolver({
@@ -216,43 +212,39 @@ cliApp
     }, {} as {[key: string]: PageT});
 
     let addedCount = 0;
-    await Promise.all(
-      addedId.map(async id => {
-        const page = pageCache[id!];
-        await vkTarget.api.groups
-          .join({
-            group_id: id,
-          })
-          .then(() =>
-            console.log(
-              `Вступили в страницу (${page.id})(${addedCount++}/${
-                addedId.length
-              })\t${page.name}`,
-            ),
-          )
-          .catch(err => console.log(id, err));
-      }),
-    );
+    for (const id of addedId) {
+      const page = pageCache[id!];
+      await vkTarget.api.groups
+        .join({
+          group_id: id,
+        })
+        .then(() =>
+          console.log(
+            `Вступили в страницу (${page.id})(${addedCount++}/${
+              addedId.length
+            })\t${page.name}`,
+          ),
+        )
+        .catch(err => console.log(id, err));
+    }
 
     let publicCount = 0;
-    await Promise.all(
-      publicPage.map(async ({id}) => {
-        const page = pageCache[id!];
-        vkSource.api.groups
-          .editManager({
-            group_id: id!,
-            user_id: storage.targetUser.user,
-            role: "administrator",
-          })
-          .then(ret =>
-            console.log(
-              `${ret ? "Назначили админов" : "Уже администратор"} (${
-                page.id
-              })(${publicCount++}/${publicPage.length})\t${page.name}`,
-            ),
-          )
-          .catch(err => console.log(id, err));
-      }),
-    );
+    for (const id of addedId) {
+      const page = pageCache[id!];
+      await vkSource.api.groups
+        .editManager({
+          group_id: id!,
+          user_id: storage.targetUser.user,
+          role: "administrator",
+        })
+        .then(ret =>
+          console.log(
+            `${ret ? "Назначили админов" : "Уже администратор"} (${
+              page.id
+            })(${publicCount++}/${publicPage.length})\t${page.name}`,
+          ),
+        )
+        .catch(err => console.log(id, err));
+    }
   });
 cliApp.parse();
