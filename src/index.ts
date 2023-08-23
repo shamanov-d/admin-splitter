@@ -105,8 +105,20 @@ cliApp
       Storage.save(storage);
     }
 
-    const vkSource = new VK({token: storage.sourceUser.token, apiVersion});
-    const vkTarget = new VK({token: storage.targetUser.token, apiVersion});
+    const vkSource = new VK({
+      token: storage.sourceUser.token,
+      apiVersion,
+      apiMode: "parallel_selected",
+      apiExecuteMethods: ["groups.join", "groups.editManager"],
+      apiLimit: 2,
+    });
+    const vkTarget = new VK({
+      token: storage.targetUser.token,
+      apiVersion,
+      apiMode: "parallel_selected",
+      apiExecuteMethods: ["groups.join", "groups.editManager"],
+      apiLimit: 2,
+    });
     const captchaResolver = new CaptchaResolver({
       key: storage.captchaToken,
       callbackNullBalance: () => "монета кончилась на счету",
